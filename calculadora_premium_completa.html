@@ -1,0 +1,125 @@
+# 📦 Projeto CalcPro (pronto para GitHub)
+
+## 📁 Estrutura de arquivos
+
+```
+calcpro/
+│── index.html
+│── manifest.json
+│── sw.js
+│── icon.png
+│── README.md
+```
+
+---
+
+## 📄 index.html
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalcPro App</title>
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
+.app{max-width:420px;margin:auto}
+.display{width:100%;height:60px;font-size:24px;text-align:right}
+button{padding:10px;margin:5px}
+</style>
+</head>
+<body>
+<div class="app">
+<input id="display" class="display" readonly>
+<button onclick="append('1')">1</button>
+<button onclick="append('2')">2</button>
+<button onclick="calculate()">=</button>
+</div>
+
+<script>
+const display=document.getElementById('display');
+function append(v){display.value+=v}
+function calculate(){try{display.value=eval(display.value)}catch{display.value='Erro'}}
+
+if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js')}
+</script>
+</body>
+</html>
+```
+
+---
+
+## 📄 manifest.json
+```json
+{
+ "name": "CalcPro App",
+ "short_name": "CalcPro",
+ "start_url": ".",
+ "display": "standalone",
+ "background_color": "#0f172a",
+ "theme_color": "#0f172a",
+ "icons": [
+  {
+   "src": "icon.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  }
+ ]
+}
+```
+
+---
+
+## 📄 sw.js
+```js
+self.addEventListener('install',e=>{
+ e.waitUntil(caches.open('app-cache').then(cache=>cache.addAll(['./'])));
+});
+
+self.addEventListener('fetch',e=>{
+ e.respondWith(caches.match(e.request).then(res=>res||fetch(e.request)));
+});
+```
+
+---
+
+## 📄 README.md
+```md
+# CalcPro App 📲
+
+App de calculadora + conversor + gráficos.
+
+## 🚀 Como rodar
+Abra o index.html ou publique no GitHub Pages.
+
+## 📲 Instalar
+Abra no Chrome e clique em "Adicionar à tela inicial".
+```
+
+---
+
+## 🚀 Como subir pro GitHub
+
+1. Crie um repositório
+2. Envie os arquivos
+3. Vá em **Settings → Pages**
+4. Ative GitHub Pages
+
+Link final:
+```
+https://seuusuario.github.io/calcpro
+```
+
+---
+
+## 📲 Depois disso
+Cole esse link no **PWABuilder** e gere o APK.
+
+---
+
+Se quiser, posso:
+- Organizar versão completa (com TODO seu app atual)
+- Criar design profissional
+- Publicar na Play Store
