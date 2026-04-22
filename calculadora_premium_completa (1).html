@@ -1,0 +1,170 @@
+# 🚀 CalcPro Elite — nível Fintech (Nubank style)
+
+## 🔥 Recursos avançados incluídos
+- 📊 Gráfico candlestick (trading real)
+- 💰 WebSocket (Binance API tempo real)
+- 🎨 UI estilo Nubank (clean, moderno)
+- 📱 PWA + pronto pra APK
+- ⚡ Performance otimizada
+
+---
+
+## 📄 index.html
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalcPro Elite</title>
+<link rel="manifest" href="manifest.json">
+<script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{
+ --bg:#0a0f1f;
+ --card:#12182b;
+ --accent:#7c3aed;
+ --text:#fff;
+}
+body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
+.app{max-width:420px;margin:auto;height:100vh;display:flex;flex-direction:column}
+.header{padding:16px;font-size:22px;font-weight:700}
+.card{background:var(--card);margin:10px;border-radius:20px;padding:15px}
+input,select{width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none}
+button{width:100%;padding:12px;border:none;border-radius:12px;background:var(--accent);color:white}
+#chart{height:300px}
+.nav{display:flex;justify-content:space-around;padding:10px;background:#111}
+.nav button{background:none;color:white}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="header">💳 CalcPro Elite</div>
+
+<div id="conv" class="card">
+<input id="amount" placeholder="Valor">
+<select id="from">
+<option value="BTCUSDT">BTC</option>
+<option value="ETHUSDT">ETH</option>
+</select>
+<input id="result" readonly placeholder="Resultado em tempo real">
+</div>
+
+<div class="card">
+<div id="chart"></div>
+</div>
+
+<div class="nav">
+<button>💱</button>
+<button>📊</button>
+</div>
+</div>
+
+<script>
+const chart = LightweightCharts.createChart(document.getElementById('chart'), {
+ layout:{background:{color:'#12182b'},textColor:'#fff'},
+ grid:{vertLines:{color:'#222'},horzLines:{color:'#222'}}
+});
+
+const candleSeries = chart.addCandlestickSeries();
+
+// histórico inicial (simples)
+let candles=[];
+
+// WebSocket Binance (tempo real)
+let socket;
+
+function connect(symbol){
+ if(socket) socket.close();
+ socket = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1m`);
+
+ socket.onmessage = (event)=>{
+  const msg = JSON.parse(event.data);
+  const k = msg.k;
+
+  const candle={
+   time: Math.floor(k.t/1000),
+   open: parseFloat(k.o),
+   high: parseFloat(k.h),
+   low: parseFloat(k.l),
+   close: parseFloat(k.c)
+  };
+
+  candleSeries.update(candle);
+
+  document.getElementById('result').value = k.c;
+ };
+}
+
+// troca moeda
+const from=document.getElementById('from');
+from.onchange=()=>connect(from.value);
+
+connect('BTCUSDT');
+
+// PWA
+if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js')}
+</script>
+</body>
+</html>
+```
+
+---
+
+## 📄 manifest.json
+```json
+{
+ "name":"CalcPro Elite",
+ "short_name":"CalcPro",
+ "display":"standalone",
+ "background_color":"#0a0f1f",
+ "theme_color":"#0a0f1f",
+ "start_url":".",
+ "icons":[
+  {"src":"icon.png","sizes":"192x192","type":"image/png"},
+  {"src":"icon.png","sizes":"512x512","type":"image/png"}
+ ]
+}
+```
+
+---
+
+## 📄 sw.js
+```js
+self.addEventListener('install',e=>{
+ e.waitUntil(caches.open('elite').then(c=>c.addAll(['./'])));
+});
+self.addEventListener('fetch',e=>{
+ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));
+});
+```
+
+---
+
+## 🎨 Ícone profissional
+Use um PNG 512x512 com:
+- fundo roxo (#7c3aed)
+- ícone branco de calculadora minimalista
+
+---
+
+## 📲 APK (recomendado)
+1. Subir no GitHub Pages
+2. Abrir no https://www.pwabuilder.com
+3. Build → Android → baixar APK
+
+---
+
+## 🚀 Agora você tem:
+- App estilo Nubank
+- Gráfico profissional real
+- Dados em tempo real (WebSocket)
+- Pronto pra virar app de verdade
+
+---
+
+Se quiser evoluir MAIS ainda:
+- Login Google
+- Carteira (saldo fake tipo banco)
+- Notificações push
+- Publicação real na Play Store
